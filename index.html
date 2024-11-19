@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>course work</title>
+</head>
+<body>
+    <script>
+        // Fetching the JSON data
+fetch('admisionList.json')
+  .then(response => response.json())  // Parse the JSON
+  .then(admisionList => {
+    console.log(admisionList); // Output the parsed data
+    console.log(admisionList.name); // Access a property
+    console.log(admisionList.admissionData);
+  })
+  
+  .catch(error => console.error('Error loading JSON:', error));
+
+// Fetching the JSON data
+fetch('admisionList.json')
+  .then(response => response.json())  // Parse the JSON
+  .then(admisionList => {
+    console.log(admisionList); // Output the parsed data
+
+    // Initialize summary variables
+    let totalStudents = 0;
+    let maleCount = 0;
+    let femaleCount = 0;
+    let districtCounts = {}; // For tracking number of students per district
+    let totalWeight = 0;
+    let totalWeightCount = 0;
+    let minWeight = Infinity;
+    let maxWeight = -Infinity;
+
+    // Process each page in the admission list
+    admisionList.admissionData.forEach(page => {
+      page.students.forEach(student => {
+        totalStudents++;
+
+        // Count gender distribution
+        if (student.gender === 'Male') {
+          maleCount++;
+        } else if (student.gender === 'Female') {
+          femaleCount++;
+        }
+
+        // Count students by district
+        if (districtCounts[student.district]) {
+          districtCounts[student.district]++;
+        } else {
+          districtCounts[student.district] = 1;
+        }
+
+        // Calculate total weight and track min/max weight
+        if (student.weight) {
+          totalWeight += student.weight;
+          totalWeightCount++;
+          if (student.weight < minWeight) minWeight = student.weight;
+          if (student.weight > maxWeight) maxWeight = student.weight;
+        }
+      });
+    });
+
+    // Calculate the average weight
+    let averageWeight = totalWeightCount > 0 ? totalWeight / totalWeightCount : 0;
+
+    // Generate the summary report
+    let summaryReport = {
+      totalStudents,
+      genderDistribution: {
+        male: maleCount,
+        female: femaleCount
+      },
+      districtDistribution: districtCounts,
+      weightRange: {
+        min: minWeight,
+        max: maxWeight
+      },
+      averageWeight
+    };
+
+    // Log the summary report
+    console.log('Summary Report:', summaryReport);
+
+    // Deliverables: 1. Complete JSON file containing all 12 pages (no changes made to the data itself)
+    // 2. Summary report as shown above
+  })
+  .catch(error => {
+    console.error('Error fetching the JSON data:', error);
+  });
+
+     </script>
+</body>
+</html>
